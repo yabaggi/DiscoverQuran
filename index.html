@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مع القرآن الكريم</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap');
+body{font-family:Arial,sans-serif;background:#f4f4f4;margin:0;padding:0;direction:rtl}
+.hero{position:relative;height:260px;background-image:url('heroimage.jpg'),url('https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=1200');background-size:cover;background-position:center;display:flex;justify-content:center;align-items:center;color:#fff;text-align:center}
+.hero::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,0.55)}
+.hero-content{position:relative;z-index:2}
+.hero h1{font-size:2.4rem;margin:0}
+.app-container{max-width:900px;background:#fff;margin:20px auto;border-radius:12px;padding:20px;box-shadow:0 6px 22px rgba(0,0,0,0.06)}
+select{width:100%;padding:12px;font-size:18px;border:1px solid #ccc;border-radius:6px;background:#fff;margin-bottom:12px;text-align:center;appearance:none}
+.ayah-row{display:flex;align-items:center;gap:8px}
+.ayah-row select{flex:1;margin-bottom:0}
+#ayah-decrement,#ayah-increment{width:108px;height:42px;font-size:20px;border:none;border-radius:8px;background:#1976d2;color:#fff;cursor:pointer}
+#ayah-decrement:disabled,#ayah-increment:disabled{background:#9aa6bf;cursor:not-allowed}
+.font-controls{display:flex;justify-content:center;align-items:center;gap:10px;margin:14px 0}
+.font-controls button{padding:8px 14px;font-size:16px;background:#1976d2;color:#fff;border:none;border-radius:6px;cursor:pointer}
+#font-size-label{color:#333}
+.quran-text-card{border:1px solid #e6e9ef;border-radius:10px;background:#fff;padding:16px;margin-bottom:16px}
+.quran-text{direction:rtl;text-align:right;font-family:'Scheherazade New',serif;font-size:16px;line-height:2;word-wrap:break-word;padding-bottom:12px}
+.translations{direction:ltr;text-align:left;font-size:16px;border-top:1px solid #f1f3f4;padding-top:12px;color:#222}
+#urdu{border-top:1px solid #eee;margin-top:12px;padding-top:12px}
+.chips-section{margin-top:20px}
+.chips-title{text-align:center;font-size:16px;font-weight:600;color:#333;margin-bottom:12px}
+.chips-container{display:flex;overflow-x:auto;gap:8px;padding:0 8px;scrollbar-width:none}
+.chips-container::-webkit-scrollbar{display:none}
+.chip{display:inline-flex;align-items:center;background:#f1f3f4;border:1px solid #dadce0;border-radius:20px;padding:8px 16px;font-size:14px;color:#3c4043;white-space:nowrap;transition:all .15s;cursor:pointer}
+.chip:hover{background:#e8f0fe;color:#1a73e8;border-color:#1a73e8}
+.chip.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.tafsir-content-box{margin-top:12px;padding:14px;border-radius:8px;background:#fafafa;border:1px solid #eee;line-height:1.7;font-size:16px;color:#222;min-height:64px;position:relative}
+.tafsir-header{font-weight:700;margin-bottom:8px;font-size:17px;color:#222}
+.copy-btn{position:absolute;top:12px;left:12px;background:#1976d2;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-size:13px;cursor:pointer}
+.copy-btn:hover{background:#125ab2}
+.status{text-align:center;color:#b00020;font-size:14px;margin-top:8px}
+audio{width:100%;margin-top:10px}
+#loop-container{display:flex;align-items:center;gap:8px;justify-content:center;margin:10px 0;font-size:15px}
+#reciter-info{text-align:center;font-size:15px;color:#333;margin-top:8px;display:none}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1>مع القرآن الكريم</h1>
+    <p>استكشف القرآن بالالترجمة والتلاوة والتفسير</p>
+  </div>
+</div>
+
+<div class="app-container">
+  <!-- Surah selector single line -->
+  <select id="surah-select">
+    <option value="">إختار السورة</option>
+  </select>
+
+  <!-- Ayah selector on next line -->
+  <div class="ayah-row">
+    <select id="ayah-select" disabled>
+      <option value="">اختر الآية</option>
+    </select>
+    <!-- increased width by 50 percent and moved to right side within same line -->
+    <button id="ayah-decrement" disabled>-</button>
+    <button id="ayah-increment" disabled>+</button>
+  </div>
+
+  <div class="font-controls">
+    <button id="font-smaller">A-</button>
+    <button id="font-bigger">A+</button>
+    <span id="font-size-label">16px</span>
+  </div>
+
+  <div class="quran-text-card">
+    <div id="arabic-text" class="quran-text" aria-live="polite"></div>
+    <div class="translations">
+      <div id="english"></div>
+      <div id="urdu"></div>
+    </div>
+  </div>
+
+  <div id="loop-container">
+    <input type="checkbox" id="play-next10">
+    <label for="play-next10">تلاوة الآيات العشرة التالية أو إلى نهاية السورة</label>
+  </div>
+
+  <div class="chips-section">
+    <div class="chips-title">إختيار القارئ</div>
+    <div class="chips-container" id="reciters-container">
+      <div class="chip reciter-chip" data-id="1" data-name="مشاري الفارسي">مشاري الفارسي</div>
+      <div class="chip reciter-chip" data-id="2" data-name="ابوبكر الشاطري">ابوبكر الشاطري</div>
+      <div class="chip reciter-chip" data-id="3" data-name="ناصر القتمي">ناصر القتمي</div>
+      <div class="chip reciter-chip" data-id="4" data-name="ياسر الدوسري">ياسر الدوسري</div>
+      <div class="chip reciter-chip" data-id="5" data-name="هانى الرفاعي">هانى الرفاعي</div>
+    </div>
+  </div>
+
+  <div id="reciter-info"></div>
+  <audio id="audio-player" controls style="display:none"></audio>
+
+  <div class="chips-section">
+    <div class="chips-title">إختيار التفسير</div>
+    <div class="chips-container" id="tafsir-authors"></div>
+
+    <div id="tafsir-text" class="tafsir-content-box">
+      <div id="tafsir-header" class="tafsir-header"></div>
+      <button class="copy-btn" id="copy-tafsir">📋 نسخ</button>
+      <div id="tafsir-body">اختر مؤلفا لعرض التفسير هنا..</div>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+const SURAH_URL = 'https://quranapi.pages.dev/api/surah.json';
+const surahSelect = document.getElementById('surah-select');
+const ayahSelect = document.getElementById('ayah-select');
+const ayahDec = document.getElementById('ayah-decrement');
+const ayahInc = document.getElementById('ayah-increment');
+const arabicEl = document.getElementById('arabic-text');
+const englishEl = document.getElementById('english');
+const urduEl = document.getElementById('urdu');
+const tafsirAuthorsEl = document.getElementById('tafsir-authors');
+const tafsirHeader = document.getElementById('tafsir-header');
+const tafsirBody = document.getElementById('tafsir-body');
+const copyBtn = document.getElementById('copy-tafsir');
+const audioPlayer = document.getElementById('audio-player');
+const playNext10 = document.getElementById('play-next10');
+const statusEl = document.getElementById('status');
+const reciterInfo = document.getElementById('reciter-info');
+
+let currentAudioData = null;
+let selectedReciterId = null;
+let selectedReciterName = '';
+let currentFontSize = 16;
+let ibnKathirId = null;
+let surahNames = [];
+let totalAyahs = 0;
+
+let isSequentialPlaying = false;
+let stopSequential = false;
+
+async function fetchJSON(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+/* load surah list */
+async function loadSurahs() {
+  try {
+    const d = await fetchJSON(SURAH_URL);
+    surahNames = Array.isArray(d) ? d.map(x => x.surahNameArabic) : [];
+    const list = Array.isArray(d) ? d : Object.values(d || {});
+    list.forEach((s, i) => {
+      const o = document.createElement('option');
+      o.value = String(i + 1);
+      o.textContent = `${i + 1}. ${s.surahNameArabic || s.surahName || ''}`;
+      surahSelect.appendChild(o);
+    });
+  } catch (err) {
+    console.error('Failed loading surahs', err);
+    statusEl.textContent = 'فشل تحميل قائمة السور';
+    for (let i = 1; i <= 114; i++) {
+      const opt = document.createElement('option');
+      opt.value = String(i);
+      opt.textContent = `سورة ${i}`;
+      surahSelect.appendChild(opt);
+    }
+  }
+}
+
+/* load tafsir authors and reorder four main ones */
+async function loadTafsirAuthors() {
+  try {
+    const arr = await fetchJSON('http://api.quran-tafseer.com/tafseer/');
+    const filtered = Array.isArray(arr) ? arr.filter(a => a.language === 'ar' || a.language === 'en') : [];
+    const priorityOrder = ['تفسير الجلالين', 'تفسير ابن كثير', 'التفسير الميسر', 'تفسير السعدي'];
+    const prioritized = [];
+    const rest = [];
+    filtered.forEach(a => {
+      if (priorityOrder.includes(a.name.trim())) prioritized.push(a);
+      else rest.push(a);
+    });
+    prioritized.sort((a, b) => priorityOrder.indexOf(a.name.trim()) - priorityOrder.indexOf(b.name.trim()));
+    const finalList = [...prioritized, ...rest];
+    tafsirAuthorsEl.innerHTML = '';
+    finalList.forEach(a => {
+      const chip = document.createElement('div');
+      chip.className = 'chip tafsir-chip';
+      chip.textContent = a.name;
+      chip.dataset.id = a.id;
+      chip.addEventListener('click', () => selectTafsir(a.id, a.name, chip));
+      tafsirAuthorsEl.appendChild(chip);
+      if (a.name.trim() === 'تفسير ابن كثير') ibnKathirId = a.id;
+    });
+  } catch (err) {
+    console.error('Failed load tafsir authors', err);
+    tafsirAuthorsEl.innerHTML = '<div style="padding:8px;color:#666">فشل تحميل المفسرين</div>';
+  }
+}
+
+/* surah change -> fill ayah list */
+surahSelect.addEventListener('change', async () => {
+  const s = parseInt(surahSelect.value, 10);
+  if (!Number.isFinite(s)) return;
+  try {
+    const meta = await fetchJSON(`https://quranapi.pages.dev/api/${s}/1.json`);
+    totalAyahs = Number(meta.totalAyah || 0);
+    ayahSelect.innerHTML = '<option value="">اختر الآية</option>';
+    for (let i = 1; i <= totalAyahs; i++) {
+      const o = document.createElement('option');
+      o.value = String(i);
+      o.textContent = String(i);
+      ayahSelect.appendChild(o);
+    }
+    ayahSelect.disabled = false;
+    ayahSelect.value = '1';
+    updateAyahButtons();
+    await loadAyah();
+  } catch (err) {
+    console.error('Failed surah meta', err);
+    statusEl.textContent = 'فشل تحميل بيانات السورة';
+  }
+});
+
+/* ayah controls */
+ayahSelect.addEventListener('change', () => { updateAyahButtons(); loadAyah(); });
+ayahDec.addEventListener('click', async () => { const v = parseInt(ayahSelect.value, 10); if (Number.isFinite(v) && v > 1) { ayahSelect.value = String(v - 1); updateAyahButtons(); await loadAyah(); } });
+ayahInc.addEventListener('click', async () => { const v = parseInt(ayahSelect.value, 10); const m = ayahSelect.options.length; if (Number.isFinite(v) && v < m) { ayahSelect.value = String(v + 1); updateAyahButtons(); await loadAyah(); } });
+
+function updateAyahButtons() {
+  const a = parseInt(ayahSelect.value, 10);
+  const m = ayahSelect.options.length;
+  ayahDec.disabled = !Number.isFinite(a) || a <= 1;
+  ayahInc.disabled = !Number.isFinite(a) || a >= m;
+}
+
+/* load ayah text and audio */
+async function loadAyah() {
+  const s = parseInt(surahSelect.value, 10);
+  const a = parseInt(ayahSelect.value, 10);
+  if (!Number.isFinite(s) || !Number.isFinite(a)) return;
+  try {
+    statusEl.textContent = '';
+    const data = await fetchJSON(`https://quranapi.pages.dev/api/${s}/${a}.json`);
+    arabicEl.textContent = data.arabic1 || '';
+    englishEl.textContent = data.english || '';
+    urduEl.textContent = data.urdu || '';
+    currentAudioData = data.audio || null;
+    audioPlayer.style.display = 'none';
+    audioPlayer.src = '';
+    if (ibnKathirId) loadIbnKathir(s, a);
+  } catch (err) {
+    console.error('Failed load ayah', err);
+    statusEl.textContent = 'فشل تحميل الآية';
+  }
+}
+
+/* load ibn kathir and mark active */
+async function loadIbnKathir(surah, ayah) {
+  tafsirHeader.textContent = `تفسير ابن كثير (${surahNames[surah - 1] || ''} – رقم الآية ${ayah})`;
+  tafsirBody.textContent = '...جاري تحميل التفسير';
+  document.querySelectorAll('.tafsir-chip').forEach(c => c.classList.remove('active'));
+  const ibnChip = [...document.querySelectorAll('.tafsir-chip')].find(c => c.textContent.trim() === 'تفسير ابن كثير');
+  if (ibnChip) ibnChip.classList.add('active');
+  try {
+    const d = await fetchJSON(`http://api.quran-tafseer.com/tafseer/${ibnKathirId}/${surah}/${ayah}`);
+    tafsirBody.textContent = d.text || d.tafseer || d.content || 'لم يتم العثور على التفسير';
+  } catch (err) {
+    console.error('Ibn Kathir failed', err);
+    tafsirBody.textContent = 'فشل تحميل تفسير ابن كثير';
+  }
+}
+
+/* copy includes title and body */
+copyBtn.addEventListener('click', () => {
+  const title = tafsirHeader.textContent.trim();
+  const text = tafsirBody.textContent.trim();
+  if (!text) return;
+  navigator.clipboard.writeText(`${title}\n\n${text}`).then(() => {
+    const old = copyBtn.textContent;
+    copyBtn.textContent = '✅ تم النسخ';
+    setTimeout(() => copyBtn.textContent = old, 2000);
+  });
+});
+
+/* font controls */
+document.getElementById('font-bigger').addEventListener('click', () => {
+  currentFontSize = Math.min(64, currentFontSize + 2);
+  arabicEl.style.fontSize = currentFontSize + 'px';
+  document.getElementById('font-size-label').textContent = currentFontSize + 'px';
+});
+document.getElementById('font-smaller').addEventListener('click', () => {
+  currentFontSize = Math.max(12, currentFontSize - 2);
+  arabicEl.style.fontSize = currentFontSize + 'px';
+  document.getElementById('font-size-label').textContent = currentFontSize + 'px';
+});
+
+/* reciter chip logic using numeric audio keys */
+function initReciterChips() {
+  document.querySelectorAll('.reciter-chip').forEach(chip => {
+    chip.addEventListener('click', async () => {
+      if (isSequentialPlaying) {
+        stopSequential = true;
+        await new Promise(r => setTimeout(r, 250));
+      }
+      document.querySelectorAll('.reciter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedReciterId = chip.dataset.id;
+      selectedReciterName = chip.dataset.name || '';
+      reciterInfo.textContent = `التلاوة بصوت القارئ ${selectedReciterName}`;
+      reciterInfo.style.display = 'block';
+      if (!currentAudioData) {
+        statusEl.textContent = 'لا يوجد صوت متاح لهذه الآية';
+        return;
+      }
+      stopSequential = false;
+      if (playNext10.checked) {
+        isSequentialPlaying = true;
+        await playSequentialAyahs(selectedReciterId);
+        isSequentialPlaying = false;
+      } else {
+        playSingleAyah(selectedReciterId);
+      }
+    });
+  });
+}
+
+/* stop sequential when checkbox turned off */
+playNext10.addEventListener('change', () => {
+  if (!playNext10.checked && isSequentialPlaying) {
+    stopSequential = true;
+    audioPlayer.pause();
+    isSequentialPlaying = false;
+    reciterInfo.style.display = 'none';
+  }
+});
+
+/* play single ayah */
+function playSingleAyah(recId) {
+  const val = currentAudioData && currentAudioData[recId];
+  if (val && val.url) {
+    audioPlayer.src = val.url;
+    audioPlayer.style.display = 'block';
+    audioPlayer.play().catch(err => { console.warn('play error', err); statusEl.textContent = 'فشل تشغيل الصوت'; });
+  } else {
+    statusEl.textContent = 'لا يوجد صوت لهذا القارئ';
+  }
+}
+
+/* sequential playback syncs UI and tafsir */
+async function playSequentialAyahs(recId) {
+  const s = parseInt(surahSelect.value, 10);
+  let a = parseInt(ayahSelect.value, 10);
+  if (!Number.isFinite(s) || !Number.isFinite(a)) return;
+  const start = a;
+  const end = Math.min(a + 9, totalAyahs);
+  for (let n = start; n <= end; n++) {
+    if (stopSequential) {
+      reciterInfo.style.display = 'none';
+      return;
+    }
+    ayahSelect.value = String(n);
+    updateAyahButtons();
+    await loadAyah();
+    const data = await fetchJSON(`https://quranapi.pages.dev/api/${s}/${n}.json`);
+    const aud = data.audio;
+    if (!aud) break;
+    const entry = aud[recId];
+    if (!entry || !entry.url) break;
+    audioPlayer.src = entry.url;
+    audioPlayer.style.display = 'block';
+    try {
+      await audioPlayer.play();
+    } catch (err) {
+      console.warn('play error', err);
+      statusEl.textContent = 'فشل تشغيل الصوت';
+      break;
+    }
+    await new Promise(resolve => {
+      const onEnd = () => {
+        audioPlayer.removeEventListener('ended', onEnd);
+        resolve();
+      };
+      audioPlayer.addEventListener('ended', onEnd);
+    });
+  }
+  reciterInfo.style.display = 'none';
+}
+
+/* manual tafsir selection */
+async function selectTafsir(id, name, chip) {
+  const s = parseInt(surahSelect.value, 10);
+  const a = parseInt(ayahSelect.value, 10);
+  if (!Number.isFinite(s) || !Number.isFinite(a)) {
+    tafsirBody.textContent = 'اختر مؤلفا لعرض التفسير هنا..';
+    return;
+  }
+  document.querySelectorAll('.tafsir-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  tafsirHeader.textContent = `${name} (${surahNames[s - 1] || ''} – رقم الآية ${a})`;
+  tafsirBody.textContent = '...جار التحميل';
+  try {
+    const d = await fetchJSON(`http://api.quran-tafseer.com/tafseer/${id}/${s}/${a}`);
+    tafsirBody.textContent = d.text || 'لم يتم العثور على التفسير';
+  } catch (err) {
+    console.error('Tafsir load failed', err);
+    tafsirBody.textContent = 'فشل تحميل التفسير';
+  }
+}
+
+/* init */
+(async function init() {
+  await loadSurahs();
+  await loadTafsirAuthors();
+  initReciterChips();
+  arabicEl.style.fontSize = currentFontSize + 'px';
+})();
+</script>
+</body>
+</html>
