@@ -175,7 +175,7 @@ async function loadSurahs() {
 /* load tafsir authors and reorder four main ones */
 async function loadTafsirAuthors() {
   try {
-    const arr = await fetchJSON('http://api.quran-tafseer.com/tafseer/');
+    const arr = await fetchJSON('https://api.quran-tafseer.com/tafseer/');
     const filtered = Array.isArray(arr) ? arr.filter(a => a.language === 'ar' || a.language === 'en') : [];
     const priorityOrder = ['تفسير الجلالين', 'تفسير ابن كثير', 'التفسير الميسر', 'تفسير السعدي'];
     const prioritized = [];
@@ -267,7 +267,7 @@ async function loadIbnKathir(surah, ayah) {
   const ibnChip = [...document.querySelectorAll('.tafsir-chip')].find(c => c.textContent.trim() === 'تفسير ابن كثير');
   if (ibnChip) ibnChip.classList.add('active');
   try {
-    const d = await fetchJSON(`http://api.quran-tafseer.com/tafseer/${ibnKathirId}/${surah}/${ayah}`);
+    const d = await fetchJSON(`https://api.quran-tafseer.com/tafseer/${ibnKathirId}/${surah}/${ayah}`);
     tafsirBody.textContent = d.text || d.tafseer || d.content || 'لم يتم العثور على التفسير';
   } catch (err) {
     console.error('Ibn Kathir failed', err);
@@ -404,7 +404,7 @@ async function selectTafsir(id, name, chip) {
   tafsirHeader.textContent = `${name} (${surahNames[s - 1] || ''} – رقم الآية ${a})`;
   tafsirBody.textContent = '...جار التحميل';
   try {
-    const d = await fetchJSON(`http://api.quran-tafseer.com/tafseer/${id}/${s}/${a}`);
+    const d = await fetchJSON(`https://api.quran-tafseer.com/tafseer/${id}/${s}/${a}`);
     tafsirBody.textContent = d.text || 'لم يتم العثور على التفسير';
   } catch (err) {
     console.error('Tafsir load failed', err);
