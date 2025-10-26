@@ -104,6 +104,7 @@ audio{width:100%;margin-top:10px}
 </div>
 
 <script>
+const proxy = "https://api.allorigins.win/raw?url=";
 const SURAH_URL='https://quranapi.pages.dev/api/surah.json';
 const surahSelect=document.getElementById('surah-select');
 const ayahSelect=document.getElementById('ayah-select');
@@ -134,7 +135,7 @@ async function loadSurahs(){
 
 async function loadTafsirAuthors(){
   try{
-    const arr=await fetchJSON('https://api.quran-tafseer.com/tafseer/');
+    const arr=await fetchJSON(proxy + encodeURIComponent('http://api.quran-tafseer.com/tafseer/'));
     const filtered=arr.filter(a=>a.language==='ar'||a.language==='en');
     const order=['تفسير الجلالين','تفسير ابن كثير','التفسير الميسر','تفسير السعدي'];
     const prioritized=[],rest=[];
@@ -183,7 +184,7 @@ async function loadIbnKathir(surah,ayah){
  document.querySelectorAll('.tafsir-chip').forEach(c=>c.classList.remove('active'));
  const ibnChip=[...document.querySelectorAll('.tafsir-chip')].find(c=>c.textContent.trim()==='تفسير ابن كثير');
  if(ibnChip) ibnChip.classList.add('active');
- const d=await fetchJSON(`https://api.quran-tafseer.com/tafseer/${ibnKathirId}/${surah}/${ayah}`);
+ const d=await fetchJSON(proxy + encodeURIComponent(`http://api.quran-tafseer.com/tafseer/${ibnKathirId}/${surah}/${ayah}`));
  tafsirBody.textContent=d.text||'لم يتم العثور على تفسير ابن كثير';
 }
 
@@ -230,7 +231,7 @@ async function selectTafsir(id,name,chip){
  if(!s||!a){tafsirBody.textContent='اختر السورة والآية أولاً';return;}
  document.querySelectorAll('.tafsir-chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');
  tafsirHeader.textContent=`${name} (${surahNames[s-1]} – رقم الآية ${a})`;tafsirBody.textContent='...جار التحميل';
- const d=await fetchJSON(`https://api.quran-tafseer.com/tafseer/${id}/${s}/${a}`);tafsirBody.textContent=d.text||'لم يتم العثور على التفسير';
+ const d=await fetchJSON(proxy + encodeURIComponent(`http://api.quran-tafseer.com/tafseer/${id}/${s}/${a}`));tafsirBody.textContent=d.text||'لم يتم العثور على التفسير';
 }
 
 loadSurahs();loadTafsirAuthors();
