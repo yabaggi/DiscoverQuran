@@ -21,8 +21,13 @@ select{width:100%;padding:12px;font-size:18px;border:1px solid #ccc;border-radiu
 .font-controls button{padding:8px 14px;font-size:16px;background:#1976d2;color:#fff;border:none;border-radius:6px;cursor:pointer}
 #font-size-label{color:#333}
 .quran-text-card{border:1px solid #e6e9ef;border-radius:10px;background:#fff;padding:16px;margin-bottom:16px}
-.quran-text{direction:rtl;text-align:right;font-family:'Scheherazade New',serif;font-size:16px;line-height:2;word-wrap:break-word;padding-bottom:12px}
-.translations{direction:ltr;text-align:left;font-size:16px;border-top:1px solid #f1f3f4;padding-top:12px;color:#222}
+.tab-buttons{display:flex;border-bottom:1px solid #e6e9ef;margin-bottom:16px}
+.tab-button{padding:10px 20px;cursor:pointer;border:none;background:transparent;font-size:16px;color:#333;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab-button.active{color:#1976d2;border-bottom-color:#1976d2;font-weight:600}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.quran-text{direction:rtl;text-align:right;font-family:'Scheherazade New',serif;font-size:16px;line-height:2;word-wrap:break-word}
+.translations{direction:ltr;text-align:left;font-size:16px;color:#222}
 #urdu{border-top:1px solid #eee;margin-top:12px;padding-top:12px}
 .chips-section{margin-top:20px}
 .chips-title{text-align:center;font-size:16px;font-weight:600;color:#333;margin-bottom:12px}
@@ -39,6 +44,26 @@ select{width:100%;padding:12px;font-size:18px;border:1px solid #ccc;border-radiu
 audio{width:100%;margin-top:10px}
 #loop-container{display:flex;align-items:center;gap:8px;justify-content:center;margin:10px 0;font-size:15px}
 #reciter-info{text-align:center;font-size:15px;color:#333;margin-top:8px;display:none}
+body.dark-mode{background:#121212;color:#e0e0e0}
+body.dark-mode .app-container{background:#1e1e1e;box-shadow:0 6px 22px rgba(255,255,255,0.06)}
+body.dark-mode select{background:#2c2c2c;color:#e0e0e0;border-color:#444}
+body.dark-mode #ayah-decrement,body.dark-mode #ayah-increment,body.dark-mode .font-controls button,body.dark-mode .copy-btn{background:#0d47a1}
+body.dark-mode #ayah-decrement:disabled,body.dark-mode #ayah-increment:disabled{background:#555}
+body.dark-mode #font-size-label{color:#e0e0e0}
+body.dark-mode .quran-text-card{background:#2c2c2c;border-color:#444}
+body.dark-mode .tab-buttons{border-bottom-color:#444}
+body.dark-mode .tab-button{color:#e0e0e0}
+body.dark-mode .tab-button.active{color:#1a73e8;border-bottom-color:#1a73e8}
+body.dark-mode .translations{color:#e0e0e0}
+body.dark-mode #urdu{border-top-color:#444}
+body.dark-mode .chips-title{color:#e0e0e0}
+body.dark-mode .chip{background:#333;color:#e0e0e0;border-color:#555}
+body.dark-mode .chip:hover{background:#444;color:#1a73e8;border-color:#1a73e8}
+body.dark-mode .chip.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+body.dark-mode .tafsir-content-box{background:#2c2c2c;border-color:#444;color:#e0e0e0}
+body.dark-mode .tafsir-header{color:#e0e0e0}
+body.dark-mode label[for="play-next10"]{color:#e0e0e0}
+body.dark-mode #reciter-info{color:#e0e0e0}
 </style>
 </head>
 <body>
@@ -63,11 +88,22 @@ audio{width:100%;margin-top:10px}
     <button id="font-smaller">A-</button>
     <button id="font-bigger">A+</button>
     <span id="font-size-label">16px</span>
+    <button id="dark-mode-toggle">🌙</button>
   </div>
 
   <div class="quran-text-card">
-    <div id="arabic-text" class="quran-text"></div>
-    <div class="translations"><div id="english"></div><div id="urdu"></div></div>
+    <div class="tab-buttons">
+      <button class="tab-button active" data-tab="ayah">الآية</button>
+      <button class="tab-button" data-tab="translation">الترجمة</button>
+    </div>
+    <div class="tab-content">
+      <div id="ayah" class="tab-pane active">
+        <div id="arabic-text" class="quran-text"></div>
+      </div>
+      <div id="translation" class="tab-pane">
+        <div class="translations"><div id="english"></div><div id="urdu"></div></div>
+      </div>
+    </div>
   </div>
 
   <div id="loop-container">
@@ -235,6 +271,34 @@ async function selectTafsir(id,name,chip){
 }
 
 loadSurahs();loadTafsirAuthors();
+
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+darkModeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  if (document.body.classList.contains('dark-mode')) {
+    localStorage.setItem('darkMode', 'enabled');
+  } else {
+    localStorage.setItem('darkMode', 'disabled');
+  }
+});
+
+if (localStorage.getItem('darkMode') !== 'disabled') {
+  document.body.classList.add('dark-mode');
+}
+
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabPanes = document.querySelectorAll('.tab-pane');
+
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabPanes.forEach(pane => pane.classList.remove('active'));
+
+    button.classList.add('active');
+    const tabId = button.dataset.tab;
+    document.getElementById(tabId).classList.add('active');
+  });
+});
 </script>
 </body>
 </html>
