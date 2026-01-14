@@ -76,79 +76,71 @@ body.dark-mode #reciter-info{color:#e0e0e0}
 </div>
 
 <div class="app-container">
-  <div class="tab-buttons" style="margin-bottom: 20px;">
-    <button class="tab-button active" data-tab="tafsir-tilawa">تفسير وتلاوة <span style="font-weight:400;font-size:13px;color:#666">(Tafsir & Tilawa)</span></button>
-    <button class="tab-button" data-tab="reading-search">قراءة وبحث <span style="font-weight:400;font-size:13px;color:#666">(Reading & Search)</span></button>
+  <select id="surah-select"><option value="">إختار السورة</option></select>
+
+  <div class="ayah-row">
+    <button id="ayah-increment" disabled>+</button>
+    <button id="ayah-decrement" disabled>-</button>
+    <select id="ayah-select" disabled><option value="">اختر الآية</option></select>
   </div>
 
-  <div class="tab-content">
-    <div id="tafsir-tilawa" class="tab-pane active">
-      <select id="surah-select"><option value="">إختار السورة</option></select>
+  <div class="font-controls">
+    <button id="font-smaller">A-</button>
+    <button id="font-bigger">A+</button>
+    <span id="font-size-label">16px</span>
+    <button id="dark-mode-toggle">🌙</button>
+  </div>
 
-      <div class="ayah-row">
-        <button id="ayah-increment" disabled>+</button>
-        <button id="ayah-decrement" disabled>-</button>
-        <select id="ayah-select" disabled><option value="">اختر الآية</option></select>
-      </div>
-
-      <div class="font-controls">
-        <button id="font-smaller">A-</button>
-        <button id="font-bigger">A+</button>
-        <span id="font-size-label">16px</span>
-        <button id="dark-mode-toggle">🌙</button>
-      </div>
-
-      <div class="quran-text-card">
-        <div class="tab-buttons">
-          <button class="tab-button active" data-tab="ayah">الآية</button>
-          <button class="tab-button" data-tab="translation">الترجمة</button>
-        </div>
-        <div class="tab-content">
-          <div id="ayah" class="tab-pane active">
-            <div id="arabic-text" class="quran-text"></div>
-          </div>
-          <div id="translation" class="tab-pane">
-            <div class="translations"><div id="english"></div><div id="urdu"></div></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="loop-container">
-        <input type="checkbox" id="play-next10">
-        <label for="play-next10">تلاوة الآيات العشرة التالية أو إلى نهاية السورة</label>
-      </div>
-
-      <div class="chips-section">
-        <div class="chips-title">إختيار القارئ</div>
-        <div class="chips-container" id="reciters-container">
-          <div class="chip reciter-chip" data-id="1" data-name="مشاري الفارسي">مشاري الفارسي</div>
-          <div class="chip reciter-chip" data-id="2" data-name="ابوبكر الشاطري">ابوبكر الشاطري</div>
-          <div class="chip reciter-chip" data-id="3" data-name="ناصر القتمي">ناصر القتمي</div>
-          <div class="chip reciter-chip" data-id="4" data-name="ياسر الدوسري">ياسر الدوسري</div>
-          <div class="chip reciter-chip" data-id="5" data-name="هانى الرفاعي">هانى الرفاعي</div>
-        </div>
-      </div>
-
-      <div id="reciter-info"></div>
-      <audio id="audio-player" controls style="display:none"></audio>
-
-      <div class="chips-section">
-        <div class="chips-title">إختيار التفسير</div>
-        <div class="chips-container" id="tafsir-authors"></div>
-
-        <div id="tafsir-text" class="tafsir-content-box">
-          <div id="tafsir-header" class="tafsir-header"></div>
-          <button class="copy-btn" id="copy-tafsir">📋 نسخ</button>
-          <div id="tafsir-body">اختر مؤلفا لعرض التفسير هنا..</div>
-        </div>
-      </div>
-
-      <div class="status" id="status"></div>
+  <div class="quran-text-card">
+    <div class="tab-buttons">
+      <button class="tab-button active" data-tab="ayah">الآية</button>
+      <button class="tab-button" data-tab="translation">الترجمة</button>
+      <button class="tab-button" data-tab="search">بحث</button>
     </div>
-    <div id="reading-search" class="tab-pane">
-        <iframe src="search.html" style="width: 100%; height: 80vh; border: none;"></iframe>
+    <div class="tab-content">
+      <div id="ayah" class="tab-pane active">
+        <div id="arabic-text" class="quran-text"></div>
+      </div>
+      <div id="translation" class="tab-pane">
+        <div class="translations"><div id="english"></div><div id="urdu"></div></div>
+      </div>
+      <div id="search" class="tab-pane">
+        <iframe src="search.html" style="width: 100%; height: 500px; border: none;"></iframe>
+      </div>
     </div>
   </div>
+
+  <div id="loop-container">
+    <input type="checkbox" id="play-next10">
+    <label for="play-next10">تلاوة الآيات العشرة التالية أو إلى نهاية السورة</label>
+  </div>
+
+  <div class="chips-section">
+    <div class="chips-title">إختيار القارئ</div>
+    <div class="chips-container" id="reciters-container">
+      <div class="chip reciter-chip" data-id="1" data-name="مشاري الفارسي">مشاري الفارسي</div>
+      <div class="chip reciter-chip" data-id="2" data-name="ابوبكر الشاطري">ابوبكر الشاطري</div>
+      <div class="chip reciter-chip" data-id="3" data-name="ناصر القتمي">ناصر القتمي</div>
+      <div class="chip reciter-chip" data-id="4" data-name="ياسر الدوسري">ياسر الدوسري</div>
+      <div class="chip reciter-chip" data-id="5" data-name="هانى الرفاعي">هانى الرفاعي</div>
+    </div>
+  </div>
+
+  <div id="reciter-info"></div>
+  <audio id="audio-player" controls style="display:none"></audio>
+
+  <div class="chips-section">
+    <div class="chips-title">إختيار التفسير</div>
+    <div class="chips-container" id="tafsir-authors"></div>
+
+    <div id="tafsir-text" class="tafsir-content-box">
+      <div id="tafsir-header" class="tafsir-header"></div>
+      <button class="copy-btn" id="copy-tafsir">📋 نسخ</button>
+      <div id="tafsir-body">اختر مؤلفا لعرض التفسير هنا..</div>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
 </div>
 
 <script>
@@ -308,30 +300,17 @@ window.addEventListener('storage', (event) => {
   }
 });
 
-document.querySelectorAll('.tab-buttons').forEach(tabGroup => {
-  const buttons = tabGroup.querySelectorAll('.tab-button');
-  const tabContentContainer = tabGroup.nextElementSibling;
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabPanes = document.querySelectorAll('.tab-pane');
 
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Deactivate buttons within the same group
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      
-      // Deactivate panes within the corresponding content container
-      if (tabContentContainer && tabContentContainer.classList.contains('tab-content')) {
-        tabContentContainer.querySelectorAll('.tab-pane').forEach(pane => {
-          pane.classList.remove('active');
-        });
-      }
-      
-      // Activate the target pane
-      const tabId = button.dataset.tab;
-      const targetPane = document.getElementById(tabId);
-      if (targetPane) {
-        targetPane.classList.add('active');
-      }
-    });
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabPanes.forEach(pane => pane.classList.remove('active'));
+
+    button.classList.add('active');
+    const tabId = button.dataset.tab;
+    document.getElementById(tabId).classList.add('active');
   });
 });
 </script>
